@@ -14,7 +14,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -70,9 +72,15 @@ public class CommunicationThread extends Thread {
             HashMap<String, Double> data = serverThread.getData();
 
             Double bitcoinInformation = null;
-            if (data.containsKey(currency)) {
+
+            Date date = new Date();
+            int hours = date.getHours();
+            int minutes = date.getMinutes();
+
+
+            if (data.containsKey(currency + " " + hours + ":" + minutes)) {
                 Log.i(Constants.TAG, "[COMMUNICATION THREAD] Getting the information from the cache...");
-                bitcoinInformation = data.get(currency);
+                bitcoinInformation = data.get(currency + " " + hours + ":" + minutes);
             } else {
                 Log.i(Constants.TAG, "[COMMUNICATION THREAD] Getting the information from the webservice...");
                 HttpClient httpClient = new DefaultHttpClient();
@@ -106,7 +114,11 @@ public class CommunicationThread extends Thread {
 
                 bitcoinInformation = Double.parseDouble(obj3.toString());
 
-                serverThread.setData(currency, bitcoinInformation);
+                Date new_date = new Date();
+                int new_hour = date.getHours();
+                int new_minute = date.getMinutes();
+
+                serverThread.setData(currency + " " + new_hour + ":" + new_minute, bitcoinInformation);
             }
 
             if (bitcoinInformation == null) {
