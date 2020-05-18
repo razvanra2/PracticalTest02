@@ -96,27 +96,15 @@ public class CommunicationThread extends Thread {
 
                 JSONObject content = new JSONObject(pageSourceCode);
                 Log.i("obj", pageSourceCode);
-                JSONArray weatherArray = content.getJSONArray(Constants.WEATHER);
-                JSONObject weather;
-                String condition = "";
-                for (int i = 0; i < weatherArray.length(); i++) {
-                    weather = weatherArray.getJSONObject(i);
-                    condition += weather.getString(Constants.MAIN) + " : " + weather.getString(Constants.DESCRIPTION);
+                JSONObject obj1 = content.getJSONObject("bpi");
+                Log.i("obj", obj1.toString());
+                JSONObject obj2 = obj1.getJSONObject(currency);
+                Log.i("obj", obj2.toString());
+                String obj3 = obj2.getString("rate_float");
+                Log.i("obj", obj3.toString());
 
-                    if (i < weatherArray.length() - 1) {
-                        condition += ";";
-                    }
-                }
 
-                JSONObject main = content.getJSONObject(Constants.MAIN);
-                String temperature = main.getString(Constants.TEMP);
-                String pressure = main.getString(Constants.PRESSURE);
-                String humidity = main.getString(Constants.HUMIDITY);
-
-                JSONObject wind = content.getJSONObject(Constants.WIND);
-                String windSpeed = wind.getString(Constants.SPEED);
-
-                bitcoinInformation = 5.0;
+                bitcoinInformation = Double.parseDouble(obj3.toString());
 
                 serverThread.setData(currency, bitcoinInformation);
             }
@@ -125,7 +113,7 @@ public class CommunicationThread extends Thread {
                 Log.e(Constants.TAG, "[COMMUNICATION THREAD] Weather Forecast Information is null!");
                 return;
             }
-            String result = null;
+            String result = bitcoinInformation.toString();
 
             printWriter.println(result);
             printWriter.flush();
